@@ -27,19 +27,14 @@ export default defineConfig({
     reporter: "html",
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
-        /* Base URL to use in actions like `await page.goto('')`. */
-        baseURL: 'https://fakeapi.platzi.com/',
-
-        /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-        trace: 'on-first-retry',
+        /* Base URL to use in actions like `await request.get('')`. */
+        baseURL: 'https://api.escuelajs.co/api/v1/',
     },
 
-    /* Configure projects for major browsers */
+    /* Configure projects */
     projects: [
         {
-            name: 'chromium',
-            use: {
-                ...devices['Desktop Chrome'],
-            },
+            name: 'api-tests',
         },
-    ]});
+    ]
+});
