@@ -1,44 +1,53 @@
 import { test, expect } from '@playwright/test'
 import { createEndMark, createStartMark } from "../src/utils";
 
-test('POST /auth/login responds within 1000ms', async ({ request }) => {
-    // 1. Create a starting mark
-    const startMark = createStartMark();
+test('POST /auth/login responds within 800ms and 300ms on average', async ({ request }) => {
+    let timesArray: number[] = [];
 
-    // 2. Execute the API call
-    const response = await request.post(`auth/login`, {
-        data: {
-            "email": "maria@mail.com",
-            "password": "12345"
-        }
-    });
+    for (let i=0; i<50; i++) {
 
-    // 3. Create an ending mark
-    const endMark = createEndMark();
+        // 1. Create a starting mark
+        const startMark = createStartMark();
 
-    // 4. Measure the duration between the two marks
-    const measurement = performance.measure(
-        '/auth/login API Latency',
-        'request-start',
-        'request-end'
-    );
+        // 2. Execute the API call
+        const response = await request.post(`auth/login`, {
+            data: {
+                "email": "maria@mail.com",
+                "password": "12345"
+            }
+        });
 
-    // 5. Assign the duration [ms]
-    const duration = measurement.duration;
+        // 3. Create an ending mark
+        const endMark = createEndMark();
 
-    console.log(`POST /auth/login latency: ${duration.toFixed(2)}ms`);
+        // 4. Measure the duration between the two marks
+        const measurement = performance.measure(
+            '/auth/login API Latency',
+            'request-start',
+            'request-end'
+        );
 
-    // API request validation
-    expect(response.ok()).toBeTruthy();
-    expect(await response.json()).toMatchObject({
-        access_token: expect.any(String),
-        refresh_token: expect.any(String)
-    });
+        // 5. Assign the duration [ms]
+        const duration = +(measurement.duration.toFixed(2));
+        timesArray.push(duration);
 
-    // Performance check
-    expect(duration).toBeLessThan(1000);
+        // API request validation
+        expect(response.ok()).toBeTruthy();
+        expect(await response.json()).toMatchObject({
+            access_token: expect.any(String),
+            refresh_token: expect.any(String)
+        });
 
-    // Clean up marks/measures just in case
-    performance.clearMarks();
-    performance.clearMeasures();
+        // Performance check
+        expect(duration).toBeLessThan(800);
+
+        // Clean up marks/measures just in case
+        performance.clearMarks();
+        performance.clearMeasures();
+    }
+
+    // Calculate the average response time and assert
+    const average = timesArray.reduce((total: number, current: number) => total + current) / timesArray.length;
+    console.log(`POST /auth/login average: ${average.toFixed(2)}ms`);
+    expect(average).toBeLessThan(300);
 });
