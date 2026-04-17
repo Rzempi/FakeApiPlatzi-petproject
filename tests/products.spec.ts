@@ -39,6 +39,6 @@ test('GET /products responds within 800ms and 300ms on average', async ({ reques
 
     // Calculate the average response time and assert
     const average = timesArray.reduce((total: number, current: number) => total + current) / timesArray.length;
-    console.log(`POST /products average: ${average.toFixed(2)}ms`);
+    console.log(`GET /products average: ${average.toFixed(2)}ms`);
     expect(average).toBeLessThan(300);
 });
