@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { createEndMark, createStartMark } from "../src/utils";
+import { users } from "../test-data";
 
 test('POST /auth/login responds within 800ms and 300ms on average', async ({ request }) => {
     let timesArray: number[] = [];
@@ -12,8 +13,8 @@ test('POST /auth/login responds within 800ms and 300ms on average', async ({ req
         // 2. Execute the API call
         const response = await request.post(`auth/login`, {
             data: {
-                "email": "maria@mail.com",
-                "password": "12345"
+                "email": users.maria.email,
+                "password": users.maria.password
             }
         });
 
